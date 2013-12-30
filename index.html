@@ -1,12 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>
-<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>
-<html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js"> <!--<![endif]-->
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -34,36 +27,51 @@
 
 <script type="text/template" id="user-panel">
     <form class="battleTagForm">
-        <input type="text" value="" name="battleTag" />
-        <input type="button" class="setTag" name="setBattleTag" value="Enter" />
+        <input type="text" value="" name="battleTag"/>
+        <input type="button" class="setTag" name="setBattleTag" value="Enter"/>
     </form>
 </script>
 
 
 <script type="text/template" id="heroes-list">
     <% _.each(heroes, function(hero) { %>
-            <br />
-            <%- hero.name %><br />
-            <%- hero.class %><br />
-            <%- hero.level %><br />
-            <%- hero.paragonLevel %><br />
-            <a href="#profiles/<%- hero.id %>" class="heroDetails">show</a>
-            <br />
+    <br/>
+    <%- hero.name %><br/>
+    <%- hero.class %><br/>
+    <%- hero.level %><br/>
+    <%- hero.paragonLevel %><br/>
+    <a href="#profiles/<%- hero.id %>" class="heroDetails">show</a>
+    <br/>
     <% }); %>
 </script>
 
 <script type="text/template" id="hero-details">
-        <h2>Stats: </h2>
-        <ul>
-            <li><a href="#profiles/<%- hero.id %>/basic">basic</a></li>
-            <li><a href="#profiles/<%- hero.id %>/advance">advance</a></li>
-        </ul>
+    <h2>Stats: </h2>
+    <ul>
+        <li><a href="#profiles/<%- hero.id %>/basic">basic</a></li>
+        <li><a href="#profiles/<%- hero.id %>/advance">advance</a></li>
+    </ul>
+    <%- hero.get('name') %><br/>
+    <%- hero.get('level') %> lvl (<%- hero.get('paragonLevel') %> lvl)<br/>
+    <br/>
+    <div class="details"></div>
+</script>
 
-        <%- hero.get('name') %><br />
-        <%- hero.get('level') %> lvl (<%- hero.get('paragonLevel') %> lvl)<br />
-        <br />
-        
+<script type="text/template" id="hero-details-basic">
+    <h2>Basic stats: </h2>
+    Damage: <%- hero.get('stats').damage %><br />
+    Armor: <%- hero.get('stats').armor %><br />
+    Dex: <%- hero.get('stats').dexterity %><br />
+    Int: <%- hero.get('stats').intelligence %><br />
+    Str: <%- hero.get('stats').strength %><br />
+    Vit: <%- hero.get('stats').vitality %><br />
+</script>
 
+<script type="text/template" id="hero-details-advance">
+    <h2>Advance stats: </h2>
+    Attack speed: <%- hero.get('stats').attackSpeed %><br />
+    Critical damage: <%- hero.get('stats').criticalDamage %><br />
+    Life on Hit: <%- hero.get('stats').lifeOnHit %><br />
 </script>
 
 

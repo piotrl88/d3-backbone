@@ -43,10 +43,12 @@ $(function () {
         showBasicDetails : function(id) {
             "use strict";
             console.log("basic of: "+id);
+            var detailsBasicView = new DetailsBasicView();
         },
         showAdvanceDetails : function (id) {
             "use strict";
             console.log("advance of: "+id);
+            var detailsAdvanceView = new DetailsAdvanceView();
         }
     });
 
@@ -93,6 +95,39 @@ $(function () {
             "use strict";
             var that = this;
             var source = $('#top-bar').html();
+            var template = _.template(source);
+            this.$el.html(source);
+        }
+    });
+
+
+    var DetailsBasicView = Backbone.View.extend({
+        el: ".details",
+        initialize: function () {
+            "use strict";
+            _.bindAll(this, 'render');
+            this.render();
+        },
+        render: function () {
+            "use strict";
+            var that = this;
+            var source = $('#hero-details-basic').html();
+            var template = _.template(source);
+            this.$el.html(source);
+        }
+    });
+
+    var DetailsAdvanceView = Backbone.View.extend({
+        el: ".details",
+        initialize: function () {
+            "use strict";
+            _.bindAll(this, 'render');
+            this.render();
+        },
+        render: function () {
+            "use strict";
+            var that = this;
+            var source = $('#hero-details-advance').html();
             var template = _.template(source);
             this.$el.html(source);
         }
