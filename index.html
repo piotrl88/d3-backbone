@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
+    <title>D3 Profiler</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -27,8 +27,8 @@
 
 <script type="text/template" id="user-panel">
     <form class="battleTagForm">
-        <input type="text" value="" name="battleTag"/>
-        <input type="button" class="setTag" name="setBattleTag" value="Enter"/>
+        <input type="text" class="input-field battleTag" value="Alucard#2129" />
+        <input type="button" class="button button-primary" value="Enter" />
     </form>
 </script>
 
@@ -40,7 +40,7 @@
     <%- hero.class %><br/>
     <%- hero.level %><br/>
     <%- hero.paragonLevel %><br/>
-    <a href="#profiles/<%- hero.id %>" class="heroDetails">show</a>
+    <button data-heroid="<%- hero.id %>" class="heroDetails">show</button>
     <br/>
     <% }); %>
 </script>
@@ -76,7 +76,7 @@
 
 
 <script src="js/vendor/jquery-1.10.2.min.js"></script>
-<script src="js/vendor/underscore.js"></script>
+<script src="js/vendor/lodash.js"></script>
 <script src="js/vendor/backbone.js"></script>
 <script src="js/main.js"></script>
 

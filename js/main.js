@@ -9,129 +9,25 @@ $(function () {
         },
         routes: {
             '': "showPanel",
-            'profiles': "showProfiles",
-            'profiles/:id': "showProfileDetails",
-            'profiles/:id/basic' : "showBasicDetails",
-            'profiles/:id/advance' : "showAdvanceDetails"
+            '*profiles': "showProfiles",
+            '*profiles/:id': "showProfileDetails",
+            'profiles/:id/basic': "showBasicDetails",
+            'profiles/:id/advance': "showAdvanceDetails"
         },
         showPanel: function () {
             "use strict";
-            var userPanelView = new UserPanelView();
+            new UserPanelView();
         },
-        showProfiles: function (e) {
+        showProfiles: function () {
             "use strict";
-            var profileModel = new ProfileModel();
-            if (localStorage.battleTag) {
-                profileModel.url = "http://eu.battle.net/api/d3/profile/" + localStorage.battleTag + "/?callback=?";
-            }
-            var profileCollection = new ProfileCollection({model: profileModel});
-            var profilesView = new ProfilesView({model: profileModel});
-
-            window.location.hash = 'profiles';
+            new ProfilesView().render();
         },
         showProfileDetails: function (id) {
             "use strict";
-            var heroModel = new HeroModel();
-            if (id) {
-                heroModel.url = "http://eu.battle.net/api/d3/profile/" + localStorage.battleTag + "/hero/" + id + "?callback=?";
-            }
-            var heroCollection = new HeroCollection({model: heroModel});
-            var heroView = new HeroView({model: heroModel});
-
-            window.location.hash = 'profiles/' + id;
-        },
-        showBasicDetails : function(id) {
-            "use strict";
-            console.log("basic of: "+id);
-            var detailsBasicView = new DetailsBasicView();
-        },
-        showAdvanceDetails : function (id) {
-            "use strict";
-            console.log("advance of: "+id);
-            var detailsAdvanceView = new DetailsAdvanceView();
+            new HeroView().render();
         }
     });
 
-    var ProfileModel = Backbone.Model.extend({
-        url: "http://eu.battle.net/api/d3/profile/Alucard-2129/?callback=?",
-        initialize: function (attributes) {
-            "use strict";
-            console.log("model started");
-            this.fetch();
-        }
-    });
-
-    var ProfileCollection = Backbone.Collection.extend({
-        initialize: function () {
-            "use strict";
-            console.log("collection started");
-        }
-    });
-
-    var HeroModel = Backbone.Model.extend({
-        url: "http://eu.battle.net/api/d3/profile/Alucard-2129/hero/235114?callback=?",
-        initialize: function (attributes) {
-            "use strict";
-            console.log("model started");
-            this.fetch();
-        }
-    });
-
-    var HeroCollection = Backbone.Collection.extend({
-        initialize: function () {
-            "use strict";
-            console.log("collection started");
-        }
-    });
-
-    var TopBarView = Backbone.View.extend({
-        el: ".header",
-        initialize: function () {
-            "use strict";
-            _.bindAll(this, 'render');
-            this.render();
-        },
-        render: function () {
-            "use strict";
-            var that = this;
-            var source = $('#top-bar').html();
-            var template = _.template(source);
-            this.$el.html(source);
-        }
-    });
-
-
-    var DetailsBasicView = Backbone.View.extend({
-        el: ".details",
-        initialize: function () {
-            "use strict";
-            _.bindAll(this, 'render');
-            this.render();
-        },
-        render: function () {
-            "use strict";
-            var that = this;
-            var source = $('#hero-details-basic').html();
-            var template = _.template(source);
-            this.$el.html(source);
-        }
-    });
-
-    var DetailsAdvanceView = Backbone.View.extend({
-        el: ".details",
-        initialize: function () {
-            "use strict";
-            _.bindAll(this, 'render');
-            this.render();
-        },
-        render: function () {
-            "use strict";
-            var that = this;
-            var source = $('#hero-details-advance').html();
-            var template = _.template(source);
-            this.$el.html(source);
-        }
-    });
 
     var UserPanelView = Backbone.View.extend({
         el: ".profiles",
@@ -141,107 +37,85 @@ $(function () {
             this.render();
         },
         events: {
-            "click .setTag": "setBattleTag"
+            "click .button": "setBattleTag"
         },
         setBattleTag: function (e) {
-            var form = $(".battleTagForm").serializeArray();
-            var battleTag = $.trim(form[0].value);
+            var battleTag = this.$el.find('.battleTag').val();
 
-            var profileModel = new ProfileModel();
             if (battleTag) {
-                localStorage.battleTag = battleTag;
-                profileModel.url = "http://eu.battle.net/api/d3/profile/" + battleTag + "/?callback=?";
+                localStorage.battleTag = battleTag.replace('#', '-');
+                Backbone.history.navigate('profiles', {trigger: true, replace: true});
             }
-            var profileCollection = new ProfileCollection({model: profileModel});
-            var profilesView = new ProfilesView({model: profileModel});
         },
         render: function () {
             "use strict";
-            var that = this;
             var source = $('#user-panel').html();
-            var template = _.template(source);
-            this.$el.html(source);
+            this.$el.html(_.template(source));
         }
     });
 
-    var HeroView = Backbone.View.extend({
-        el: '.profiles',
+    var ProfilesModel = Backbone.Model.extend({
+        url: "http://eu.battle.net/api/d3/profile/" + localStorage.battleTag + "/?callback=?",
         initialize: function () {
             "use strict";
-            _.bindAll(this, 'render');
-            this.fetchModel();
-        },
-        fetchModel: function () {
-            var that = this;
-            that.model.fetch({
-                success: function (model) {
-                    var hero = model;
-                    that.render(hero);
-                },
-                error: function () {
-                    console.log("Fetch error!");
-                }
-            });
-        },
-        render: function (model) {
-            "use strict";
-            var that = this;
-            var source = $('#hero-details').html();
-            var template = _.template(source);
-            console.log(model);
-            var html = template({
-                hero: model
-            });
-            this.$el.html(html);
+            this.fetch();
         }
     });
 
     var ProfilesView = Backbone.View.extend({
         el: '.profiles',
+        model: new ProfilesModel(),
         initialize: function () {
             "use strict";
-            _.bindAll(this, 'render', 'fetchModel');
-            this.fetchModel();
+            _.bindAll(this, 'render');
+            this.render();
         },
-        /*showHeroDetails: function (e) {
-            "use strict";
-            var form = $(e.target, this).parent().serializeArray(),
-                heroId = form[0].value;
+        events: {
+            "click .heroDetails": "showHeroDetail"
+        },
+        showHeroDetail: function (e) {
+            var heroId = $(e.target).data('heroid');
 
-            var heroModel = new HeroModel();
             if (heroId) {
-                heroModel.url = "http://eu.battle.net/api/d3/profile/" + localStorage.battleTag + "/hero/" + heroId + "?callback=?";
+                localStorage.heroId = heroId;
+                Backbone.history.navigate('profiles/' + heroId, { trigger: true, replace: true });
             }
-            var heroCollection = new HeroCollection({model: heroModel});
-            var heroView = new HeroView({model: heroModel});
-
-            console.log(heroId);
-        },*/
-        fetchModel: function () {
-            var that = this;
-            that.model.fetch({
-                success: function (model) {
-                    var heroes = model.get('heroes');
-                    that.render(model);
-                },
-                error: function () {
-                    console.log("Fetch error!");
-                }
-            });
         },
-        render: function (model) {
+        render: function () {
             "use strict";
-            var that = this;
-            var source = $('#heroes-list').html();
-            var template = _.template(source);
-            var html = template({
-                heroes: model.get("heroes")
-            });
-            this.$el.html(html);
+            var template = _.template($('#heroes-list').html(), { heroes: this.model.get("heroes") });
+
+            this.$el.html(template);
         }
     });
+
+    var HeroModel = Backbone.Model.extend({
+        url: "http://eu.battle.net/api/d3/profile/" + localStorage.battleTag + "/hero/" + localStorage.heroId + "?callback=?",
+        initialize: function () {
+            "use strict";
+            this.fetch();
+        }
+    });
+
+    var HeroView = Backbone.View.extend({
+        el: '.profiles',
+        model: new HeroModel(),
+        initialize: function () {
+            "use strict";
+            _.bindAll(this, 'render');
+            this.render();
+        },
+        render: function () {
+            "use strict";
+            var template = _.template($('#hero-details').html(), { hero: this.model });
+
+            this.$el.html(template);
+        }
+    });
+
+
     Backbone.history.start();
-    var app = new AppRouter();
-    var topbarView = new TopBarView();
+
+    new AppRouter();
 
 });
